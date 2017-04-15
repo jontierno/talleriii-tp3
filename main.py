@@ -30,11 +30,11 @@ class RestHandler(webapp2.RequestHandler):
         super(RestHandler, self).dispatch()
 
     def SendJson(self, r):
-        self.response.headers['content-type'] = 'text/plain'
+        self.response.headers['content-type'] = 'application/json'
         self.response.write(json.dumps(r))
 
 
-class QueryHandler(RestHandler):
+class DaylyHandler(RestHandler):
 
     def get(self):
         guests = model.AllGuests()
@@ -42,7 +42,7 @@ class QueryHandler(RestHandler):
         self.SendJson(r)
 
 
-class UpdateHandler(RestHandler):
+class HourlyHandler(RestHandler):
 
     def post(self):
         r = json.loads(self.request.body)
@@ -50,26 +50,7 @@ class UpdateHandler(RestHandler):
         r = AsDict(guest)
         self.SendJson(r)
 
-
-class InsertHandler(RestHandler):
-
-    def post(self):
-        r = json.loads(self.request.body)
-        guest = model.InsertGuest(r['first'], r['last'])
-        r = AsDict(guest)
-        self.SendJson(r)
-
-
-class DeleteHandler(RestHandler):
-
-    def post(self):
-        r = json.loads(self.request.body)
-        model.DeleteGuest(r['id'])
-
-
 APP = webapp2.WSGIApplication([
-    ('/rest/query', QueryHandler),
-    ('/rest/insert', InsertHandler),
-    ('/rest/delete', DeleteHandler),
-    ('/rest/update', UpdateHandler),
+    ('/rest/daily', DaylyHandler),
+    ('/rest/hourly', HourlyHandler),
 ], debug=True)
