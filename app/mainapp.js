@@ -9,11 +9,11 @@ matchApp.config(['$routeProvider',
     $routeProvider.
       when('/applications', {
         templateUrl: 'applications.html',
-        controller: 'ApplicationController'
+        controller: 'ApplicationController as ctrl'
       }).
       when('/functions', {
         templateUrl: 'functions.html',
-        controller: 'FunctionsController'
+        controller: 'FunctionsController as ctrl'
       }).
       otherwise({
         redirectTo: '/applications'

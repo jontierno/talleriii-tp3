@@ -34,23 +34,23 @@ class RestHandler(webapp2.RequestHandler):
         self.response.write(json.dumps(r))
 
 
-class DaylyHandler(RestHandler):
+class ApplicationsHandler(RestHandler):
 
     def get(self):
-        guests = model.AllGuests()
-        r = [AsDict(guest) for guest in guests]
+        r = []
+        v = {}
+        r.append({'name':"app1", 'count':10})
         self.SendJson(r)
 
 
-class HourlyHandler(RestHandler):
-
-    def post(self):
-        r = json.loads(self.request.body)
-        guest = model.UpdateGuest(r['id'], r['first'], r['last'])
-        r = AsDict(guest)
+class FunctionsHandler(RestHandler):
+    def get(self):
+        r = []
+        v = {}
+        r.append({'name':"funct", 'count':10})
         self.SendJson(r)
 
 APP = webapp2.WSGIApplication([
-    ('/rest/daily', DaylyHandler),
-    ('/rest/hourly', HourlyHandler),
+    ('/rest/applications', ApplicationsHandler),
+    ('/rest/functions', FunctionsHandler),
 ], debug=True)
