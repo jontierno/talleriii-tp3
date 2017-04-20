@@ -13,18 +13,40 @@
 # limitations under the License.
 
 import webapp2
-
+import shardCounter.namedShardCounters as counters
+import datetime
+import json
+import cgi
+from datetime import datetime,timedelta
+import logging
 
 class ApplicationCounterHandler(webapp2.RequestHandler):
     def put(self):
-        self.response.write("hello world")
+
+    	#logging.debug(self.request.body.application)
+    	body_unicode = self.request.body.decode('utf-8')
+    	body = json.loads(body_unicode)
+    	timestamp = dt_parse(body.get("timestamp"))
+    	counters.ApplicationCounter.increment(body.get("application"), timestamp)
 
 
 class FunctionCounterHandler(webapp2.RequestHandler):
     def put(self):
-        self.response.write("hello world")
+    	#logging.debug(self.request.body.application)
+    	body_unicode = self.request.body.decode('utf-8')
+    	body = json.loads(body_unicode)
+    	timestamp = dt_parse(body.get("timestamp"))
+    	counters.FunctionCounter.increment(body.get("function"), timestamp)
+       
 
 
+def dt_parse(t):
+    ret = datetime.strptime(t[0:16],'%Y-%m-%dT%H:%M')
+    if t[18]=='+':
+        ret+=timedelta(hours=int(t[19:22]),minutes=int(t[23:]))
+    elif t[18]=='-':
+        ret-=timedelta(hours=int(t[19:22]),minutes=int(t[23:]))
+    return ret
 
 app = webapp2.WSGIApplication([
     ('/application', ApplicationCounterHandler),
