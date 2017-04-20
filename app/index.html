@@ -1,9 +1,9 @@
 <!doctype html>
 
-<html ng-app = "ErrorLog">
+<html ng-app = "MatchApp">
 <head>
 	<meta charset="utf-8">
-	<title>ErrorLog</title>
+	<title>MatchApp</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -20,7 +20,8 @@
 
   <script src="mainapp.js"></script>
   <script src="controller.js"></script>
-  
+
+
 
   <style>
     .container input {
@@ -49,7 +50,7 @@
 
 </head>
 
-<body data-spy="scroll" data-target=".navbar" data-offset="50" ng-controller="MainController" >
+<body data-spy="scroll" data-target=".navbar" data-offset="50" >
     <nav class="navbar navbar-default navbar-inverse" role="navigation">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
@@ -59,17 +60,19 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">ErrorsLog</a>
+        <a class="navbar-brand" href="#">ErrosLog</a>
       </div>
     
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
         <ul class="nav navbar-nav navbar-left">
-        <li data-match-route="/applications"><a href="#/applications">Aplicaciones</a></li>
-        <li data-match-route="/functions"><a href="#/functions">Funciones</a></li>
-        </ul>
+        <li data-match-route="/user"><a href="#/applications">Aplicaciones</a></li>
+        <li data-match-route="/user"><a href="#/functions">Funciones</a></li>
       </div><!-- /.navbar-collapse -->
     </nav>
+  <div class="container" ng-show="hasMessage" style="text-align: center;" >
+      <h3><p ng-class="messageclass" style="padding: 15px;"> {{msgInfoOperacion}}</p></h3>
+  </div>
   <div ng-view></div>
 
   
