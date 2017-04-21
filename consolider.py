@@ -13,18 +13,28 @@
 # limitations under the License.
 
 import webapp2
+import logging
+import shardCounter.namedShardCounters as counters
 
 
-class RunHandler(webapp2.RequestHandler):
+CHUNK_SIZE_FUNC=10
+CHUNK_SIZE_APP=10
+
+class FunctionHandler(webapp2.RequestHandler):
     def put(self):
-    	"""self.request.body"""
-        self.response.write("hello world")
+        logging.info("Starting consolidation of functions")
+        q = counters.FunctionCounter.get_dirties().fetch(limit=CHUNK_SIZE_FUNC)
+        
 
-class ConsolidateHandler(webapp2.RequestHandler):
+class ApplicationHandler(webapp2.RequestHandler):
     def put(self):
-        self.response.write("hello world")
+    	logging.info("Starting consolidation of applications")
+        q = counters.ApplicationCounter.get_dirties().fetch(limit=CHUNK_SIZE_APP)
+        for element in q:
+			counters.ApplicationCounter.consolidate(element)        
+
 
 app = webapp2.WSGIApplication([
-    ('/run', RunHandler),
-    ('/consolidate', ConsolidateHandler),
+    ('/function', FunctionHandler),
+    ('/application', ApplicationHandler),
 ], debug=True)

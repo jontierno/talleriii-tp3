@@ -19,20 +19,21 @@ import json
 import cgi
 from datetime import datetime,timedelta
 import logging
+from google.appengine.ext import ndb
 
 class ApplicationCounterHandler(webapp2.RequestHandler):
     def put(self):
 
-    	#logging.debug(self.request.body.application)
+    	
     	body_unicode = self.request.body.decode('utf-8')
-    	body = json.loads(body_unicode)
+    	body = json.loads(body_unicode)	
     	timestamp = dt_parse(body.get("timestamp"))
+    	logging.debug("Registering error to %s on %s",body.get("application"),body.get("timestamp"))
     	counters.ApplicationCounter.increment(body.get("application"), timestamp)
 
 
 class FunctionCounterHandler(webapp2.RequestHandler):
     def put(self):
-    	#logging.debug(self.request.body.application)
     	body_unicode = self.request.body.decode('utf-8')
     	body = json.loads(body_unicode)
     	timestamp = dt_parse(body.get("timestamp"))
