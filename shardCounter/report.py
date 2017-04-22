@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime, timedelta
 
 from google.appengine.ext import ndb
 
@@ -28,6 +28,14 @@ class FunctionReportEntry(ndb.Model):
     def get_one(cls, name,date,hour):
         key = cls.build_id(name,date,hour)
         return cls.get_or_insert(key)
+
+    @classmethod
+    def getEntriesLastHours(cls, hours, page, pagesize):
+        now = datetime.today()
+        now = now.replace(minute=00, second = 00)
+        past = now - timedelta(hours=REPORT_HOURS)
+        cls.query().filter(cls.date == past)
+
 
     def setAccumulated(self, q):
         self.total = self.count + q

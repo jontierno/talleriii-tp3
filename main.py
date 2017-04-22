@@ -12,45 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
-
 import webapp2
+import resthandler
+from google.appengine.api import taskqueue
 
-import model
-
-
-def AsDict(guest):
-    return {'id': guest.key.id(), 'first': guest.first, 'last': guest.last}
-
-
-class RestHandler(webapp2.RequestHandler):
-
-    def dispatch(self):
-        # time.sleep(1)
-        super(RestHandler, self).dispatch()
-
-    def SendJson(self, r):
-        self.response.headers['content-type'] = 'application/json'
-        self.response.write(json.dumps(r))
-
-
-class ApplicationsHandler(RestHandler):
-
+class ApplicationsHandler(resthandler.RestHandler):
     def get(self):
-        r = []
-        v = {}
-        r.append({'name':"app1", 'count':10})
-        self.SendJson(r)
+        body = self.readJson()
 
 
-class FunctionsHandler(RestHandler):
+class FunctionsHandler(resthandler.RestHandler):
     def get(self):
+        body = self.readJson()
         r = []
         v = {}
         r.append({'name':"funct", 'count':10})
         self.SendJson(r)
 
+class ReportHandler(RestHandler):
+    def post(self):
+        body = self.readJson()
+        r.append({'name':"app1", 'count':10})
+        self.SendJson(r)
+
+
 APP = webapp2.WSGIApplication([
     ('/rest/applications', ApplicationsHandler),
     ('/rest/functions', FunctionsHandler),
+    ('/rest/report', FunctionsHandler),
 ], debug=True)

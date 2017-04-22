@@ -14,12 +14,8 @@ class FunctionCounter(shard.GeneralCounterShard):
 		namesh = FUNCTION_NAME_TEMPLATE.format(name, "%s/%s/%s" % (timestamp.day, timestamp.month, timestamp.year), timestamp.hour)
 		shard.increment(FunctionCounter,namesh)
 	@classmethod
-	def get_dirties(cls, lastDate):
-		return shard.GeneralCounterShardConfig.get_dirties(FunctionCounter,lastDate)
-	@classmethod
-	def get_count(cls, name):
-		return 1
-
+	def get_dirties(cls):
+		return shard.GeneralCounterShardConfig.get_dirties(FunctionCounter)
 	@classmethod
 	def consolidate(cls, config):
 		now = datetime.today()
@@ -41,6 +37,7 @@ class FunctionCounter(shard.GeneralCounterShard):
 		entry.date=date
 		entry.put()
 
+		#it should be into report
 		# i needn't update all, but it's a quick and dirty solution.
 		accumulated = 0
 		actualDate=now

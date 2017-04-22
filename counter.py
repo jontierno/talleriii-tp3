@@ -14,30 +14,25 @@
 
 import webapp2
 import shardCounter.namedShardCounters as counters
-import json
-import cgi
 from datetime import datetime,timedelta
 import logging
-from google.appengine.ext import ndb
+import resthandler 
 
-
-class ApplicationCounterHandler(webapp2.RequestHandler):
+class ApplicationCounterHandler(resthandler.RestHandler):
     def put(self):
-    	body_unicode = self.request.body.decode('utf-8')
-    	body = json.loads(body_unicode)	
-    	timestamp = dt_parse(body.get("timestamp"))
-    	logging.debug("Registering error to application %s on %s",body.get("application"),body.get("timestamp"))
-    	counters.ApplicationCounter.increment(body.get("application"), timestamp)
+        body = self.readJson()
+        timestamp = dt_parse(body.get("timestamp"))
+        logging.debug("Registering error to application %s on %s",body.get("application"),body.get("timestamp"))
+        counters.ApplicationCounter.increment(body.get("application"), timestamp)
 
 
-class FunctionCounterHandler(webapp2.RequestHandler):
+class FunctionCounterHandler(resthandler.RestHandler):
     def put(self):
-    	body_unicode = self.request.body.decode('utf-8')
-    	body = json.loads(body_unicode)
-    	timestamp = dt_parse(body.get("timestamp"))
-    	logging.debug("Registering error to function %s on %s",body.get("function"),body.get("timestamp"))
-    	counters.FunctionCounter.increment(body.get("function"), timestamp)
-       
+        body = self.readJson()
+        timestamp = dt_parse(body.get("timestamp"))
+        logging.debug("Registering error to function %s on %s",body.get("function"),body.get("timestamp"))
+        counters.FunctionCounter.increment(body.get("function"), timestamp)
+
 
 
 def dt_parse(t):

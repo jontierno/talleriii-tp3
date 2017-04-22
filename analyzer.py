@@ -13,17 +13,14 @@
 # limitations under the License.
 
 import webapp2
-import json
 import logging
 import re
 from google.appengine.api import taskqueue
+import resthandler
 
-class AnalyzerHandler(webapp2.RequestHandler):
+class AnalyzerHandler(resthandler.RestHandler):
 	def put(self):
-		body_unicode = self.request.body.decode('utf-8')
-		logging.info(body_unicode)
-		body = json.loads(body_unicode)	
-		
+		body = self.readJson()
 		trace = body.get("trace")
 		application = body.get("application")
 		timestamp = body.get("timestamp")

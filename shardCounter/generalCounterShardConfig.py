@@ -33,9 +33,9 @@ class GeneralCounterShardConfig(ndb.Model):
         return [ndb.Key(kind, shard_key_string)
                 for shard_key_string in shard_key_strings]
     @classmethod
-    def get_dirties(cls, kind,date):
-        logging.debug("Searching dirties for kind {} since {}".format(kind.__name__,date.isoformat()))
-        return cls.query().filter(cls.dirty == True,cls.kind == kind.__name__, cls.lastDirty >date).order(cls.lastDirty)
+    def get_dirties(cls, kind):
+        logging.debug("Searching dirties for kind {}".format(kind.__name__))
+        return cls.query().filter(cls.dirty == True,cls.kind == kind.__name__).order(cls.lastDirty)
 
 
 class GeneralCounterShard(ndb.Model):

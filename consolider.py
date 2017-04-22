@@ -14,35 +14,35 @@
 
 import webapp2
 import logging
-import shardCounter.namedShardCounters as counters
-from google.appengine.api import taskqueue
 from datetime import datetime,timedelta
 import json
 
-CHUNK_SIZE_FUNC=30
-CHUNK_SIZE_APP=1
+from google.appengine.api import taskqueue
+from google.appengine.datastore.datastore_query import Cursor
+
+import shardCounter.namedShardCounters as counters
+import resthandler
+
+CHUNK_SIZE_FUNC=1
+CHUNK_SIZE_APP=50
 DATE_FORMAT='%Y-%m-%dT%H:%M:%S.%f'
-class FunctionHandler(webapp2.RequestHandler):
+class FunctionHandler(resthandler.RestHandler):
 	def put(self):
 		logging.info("Starting consolidation of functions")
 
-		date = None
-		body_unicode = self.request.body.decode('utf-8')
-		logging.info(body_unicode)
-		if len(body_unicode) >0:
-			body = json.loads(body_unicode)	
-			date = datetime.strptime(body.get("lastDate"), DATE_FORMAT) if body.get("lastDate") else datetime.min
-		else:
-			date = datetime.min
-		
+		body = self.readJson()
 
-		q = counters.FunctionCounter.get_dirties(date).fetch(limit=CHUNK_SIZE_FUNC)	
+		if body.get("cursor"):
+			(q, cursor, more)= counters.FunctionCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_FUNC, 
+				start_cursor=Cursor.from_websafe_string(body.get("cursor")))
+		else:
+			(q, cursor, more)= counters.FunctionCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_FUNC)
+			
 		logging.info("{} Function Records taken".format(len(q)))
 		for f in q:
 			counters.FunctionCounter.consolidate(f)
-		##f is sorter by dirty date.
-		if len(q) == CHUNK_SIZE_FUNC:
-			task = taskqueue.add(url='/function',target='consolider',method='PUT',payload="{\"lastDate\": \"%s\"}" % q[-1].lastDirty.strftime(DATE_FORMAT))
+		if more:
+			task = taskqueue.add(url='/function',target='consolider',method='PUT',payload="{\"cursor\": \"%s\"}" % cursor.to_websafe_string())
 			logging.info("Queueing taks in order to continue consolidation of functions")
 			self.response.write('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
 		else:
@@ -75,14 +75,6 @@ class ApplicationHandler(webapp2.RequestHandler):
 			self.response.write('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
 		else:
 			self.response.write('Consolidation done')
-
-def dt_parse(t):
-    ret = datetime.strptime(t,' ')
-    if t[18]=='+':
-        ret+=timedelta(hours=int(t[19:22]),minutes=int(t[23:]))
-    elif t[18]=='-':
-        ret-=timedelta(hours=int(t[19:22]),minutes=int(t[23:]))
-    return ret
 
 app = webapp2.WSGIApplication([
 	('/function', FunctionHandler),
