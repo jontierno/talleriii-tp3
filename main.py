@@ -14,12 +14,15 @@
 
 import webapp2
 from datetime import datetime
+import json
+import logging
 
 from google.appengine.api import taskqueue
 from google.appengine.datastore.datastore_query import Cursor
 
 import shardCounter.report as report
 import resthandler
+
 
 FUNCTIONS_PAGE_SIZE=10
 APPLICATIONS_PAGE_SIZE=10
@@ -61,12 +64,20 @@ class FunctionsHandler(resthandler.RestHandler):
 class ReportHandler(resthandler.RestHandler):
     def post(self):
         body = self.readJson()
-        r.append({'name':"app1", 'count':10})
-        self.SendJson(r)
+
+        queue = taskqueue.Queue(name='analysis')
+        logging.debug(json.dumps(body))
+        task = taskqueue.Task(url='/',
+            target='analyzer',
+            payload= json.dumps(body),
+            method="PUT")
+
+        queue.add(task)
+        self.SendJsonOKMessage('Analyze queued')
 
 
 APP = webapp2.WSGIApplication([
     ('/rest/applications', ApplicationsHandler),
     ('/rest/functions', FunctionsHandler),
-    ('/rest/report', FunctionsHandler),
+    ('/rest/report', ReportHandler),
 ], debug=True)

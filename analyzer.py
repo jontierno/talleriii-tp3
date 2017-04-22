@@ -20,6 +20,7 @@ import resthandler
 
 class AnalyzerHandler(resthandler.RestHandler):
 	def put(self):
+		logging.debug(self.request.body)
 		body = self.readJson()
 		trace = body.get("trace")
 		application = body.get("application")
