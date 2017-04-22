@@ -50,6 +50,8 @@ class FunctionHandler(resthandler.RestHandler):
 			logging.info("Consolidation of functions done")
 			self.SendJsonOKMessage('Consolidation done')
 			
+	def get(self):
+		self.put()
 
 class ApplicationHandler(resthandler.RestHandler):
 	def put(self):
@@ -76,7 +78,9 @@ class ApplicationHandler(resthandler.RestHandler):
 			logging.info("Consolidation of applications done")
 			self.SendJsonOKMessage('Consolidation done')
 		
-
+	def get(self):
+		self.put()
+		
 app = webapp2.WSGIApplication([
 	('/function', FunctionHandler),
 	('/application', ApplicationHandler),

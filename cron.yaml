@@ -1,0 +1,10 @@
+cron:
+- description: Application Consolider job
+  url: /application
+  target: consolider
+  schedule: every 30 mins
+
+- description: Function Consolider job
+  url: /function
+  target: consolider
+  schedule: every 10 mins
