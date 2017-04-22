@@ -65,8 +65,8 @@ class ApplicationCounter(shard.GeneralCounterShard):
 		namesh = APPLICATION_NAME_TEMPLATE.format(name, "%s/%s/%s" % (timestamp.day, timestamp.month, timestamp.year))
 		shard.increment(ApplicationCounter,namesh)
 	@classmethod
-	def get_dirties(cls, lastDate):
-		return shard.GeneralCounterShardConfig.get_dirties(ApplicationCounter,lastDate)
+	def get_dirties(cls):
+		return shard.GeneralCounterShardConfig.get_dirties(ApplicationCounter)
 	@classmethod
 	def consolidate(cls, config):
 		name=ndb.Key.id(config.key)

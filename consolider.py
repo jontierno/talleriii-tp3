@@ -14,7 +14,6 @@
 
 import webapp2
 import logging
-from datetime import datetime,timedelta
 import json
 
 from google.appengine.api import taskqueue
@@ -23,8 +22,8 @@ from google.appengine.datastore.datastore_query import Cursor
 import shardCounter.namedShardCounters as counters
 import resthandler
 
-CHUNK_SIZE_FUNC=1
-CHUNK_SIZE_APP=50
+CHUNK_SIZE_FUNC=15
+CHUNK_SIZE_APP=100
 DATE_FORMAT='%Y-%m-%dT%H:%M:%S.%f'
 class FunctionHandler(resthandler.RestHandler):
 	def put(self):
@@ -48,33 +47,28 @@ class FunctionHandler(resthandler.RestHandler):
 		else:
 			self.response.write('Consolidation done')
 
-class ApplicationHandler(webapp2.RequestHandler):
+class ApplicationHandler(resthandler.RestHandler):
 	def put(self):
 		logging.info("Starting consolidation of applications")
 
-		date = None
-		body_unicode = self.request.body.decode('utf-8')
-		logging.info(body_unicode)
-		if len(body_unicode) >0:
-			body = json.loads(body_unicode)	
-			date = datetime.strptime(body.get("lastDate"), DATE_FORMAT) if body.get("lastDate") else datetime.min
-		else:
-			date = datetime.min
-		
+		body = self.readJson()
 
-		q = counters.ApplicationCounter.get_dirties(date).fetch(limit=CHUNK_SIZE_APP)
-		for element in q:
-			counters.ApplicationCounter.consolidate(element)
+		if body.get("cursor"):
+			(q, cursor, more)= counters.ApplicationCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_APP, 
+				start_cursor=Cursor.from_websafe_string(body.get("cursor")))
+		else:
+			(q, cursor, more)= counters.ApplicationCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_APP)
+			
 		logging.info("{} Application Records taken".format(len(q)))
 		for f in q:
 			counters.ApplicationCounter.consolidate(f)
-		##f is sorter by dirty date.
-		if len(q) == CHUNK_SIZE_APP:
-			task = taskqueue.add(url='/application',target='consolider',method='PUT',payload="{\"lastDate\": \"%s\"}" % q[-1].lastDirty.strftime(DATE_FORMAT))
+		if more:
+			task = taskqueue.add(url='/application',target='consolider',method='PUT',payload="{\"cursor\": \"%s\"}" % cursor.to_websafe_string())
 			logging.info("Queueing taks in order to continue consolidation of applications")
 			self.response.write('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
 		else:
-			self.response.write('Consolidation done')
+			self.response.write('Consolidation of Applications done')
+		
 
 app = webapp2.WSGIApplication([
 	('/function', FunctionHandler),
