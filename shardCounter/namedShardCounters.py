@@ -19,7 +19,7 @@ class FunctionCounter(shard.GeneralCounterShard):
 	@classmethod
 	def consolidate(cls, config):
 		now = datetime.today()
-		now = now.replace(minute=00, second = 00)
+		now = now.replace(minute=00, second = 00,microsecond= 00)
 		past = now - timedelta(hours=REPORT_HOURS)
 		
 		#consolidating counter of the entry

@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from google.appengine.ext import ndb
-
+import logging
 
 APP_KEY_TEMPLATE = '{}-{}'
 FUNC_KEY_TEMPLATE = '{}-{}-{}'
@@ -13,6 +13,11 @@ class ApplicationReportEntry(ndb.Model):
     @classmethod
     def build_id(cls,name, date):
         return APP_KEY_TEMPLATE.format(name,date)
+    @classmethod
+    def getEntriesByDate(cls, date):
+        qdate = date.replace(hour=00,minute=00, second = 00, microsecond= 00)
+        return cls.query().filter(cls.date == qdate).order(-cls.count)
+
 
 
 class FunctionReportEntry(ndb.Model):
@@ -30,11 +35,11 @@ class FunctionReportEntry(ndb.Model):
         return cls.get_or_insert(key)
 
     @classmethod
-    def getEntriesLastHours(cls, hours, page, pagesize):
+    def getEntriesLastHours(cls, hours):
         now = datetime.today()
-        now = now.replace(minute=00, second = 00)
-        past = now - timedelta(hours=REPORT_HOURS)
-        cls.query().filter(cls.date == past)
+        now = now.replace(minute=00, second = 00, microsecond= 00)
+        past = now - timedelta(hours=hours)
+        return cls.query().filter(cls.date == past).order(-cls.total)
 
 
     def setAccumulated(self, q):
