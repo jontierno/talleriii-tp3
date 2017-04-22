@@ -14,7 +14,6 @@
 
 import webapp2
 import shardCounter.namedShardCounters as counters
-import datetime
 import json
 import cgi
 from datetime import datetime,timedelta

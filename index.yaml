@@ -15,3 +15,10 @@ indexes:
   - name: dirty
   - name: kind
   - name: lastDirty
+
+- kind: GeneralCounterShardConfig
+  properties:
+  - name: dirty
+  - name: kind
+  - name: lastDirty
+    direction: desc
