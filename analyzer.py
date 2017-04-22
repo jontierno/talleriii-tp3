@@ -44,7 +44,7 @@ class AnalyzerHandler(resthandler.RestHandler):
 		rpc.get_result()
 		for rpc in rpcs:
 			rpc.get_result()
-
+		self.SendJsonOKMessage('Analyze done, update tasks queued')
 
 app = webapp2.WSGIApplication([
 	('/', AnalyzerHandler),

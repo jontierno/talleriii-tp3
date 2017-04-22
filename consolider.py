@@ -23,18 +23,20 @@ import shardCounter.namedShardCounters as counters
 import resthandler
 
 CHUNK_SIZE_FUNC=15
-CHUNK_SIZE_APP=100
+CHUNK_SIZE_APP=50
 DATE_FORMAT='%Y-%m-%dT%H:%M:%S.%f'
 class FunctionHandler(resthandler.RestHandler):
 	def put(self):
-		logging.info("Starting consolidation of functions")
+		
 
 		body = self.readJson()
 
 		if body.get("cursor"):
+			logging.info("Continuing consolidation of functions")
 			(q, cursor, more)= counters.FunctionCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_FUNC, 
 				start_cursor=Cursor.from_websafe_string(body.get("cursor")))
 		else:
+			logging.info("Starting consolidation of functions")
 			(q, cursor, more)= counters.FunctionCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_FUNC)
 			
 		logging.info("{} Function Records taken".format(len(q)))
@@ -42,21 +44,25 @@ class FunctionHandler(resthandler.RestHandler):
 			counters.FunctionCounter.consolidate(f)
 		if more:
 			task = taskqueue.add(url='/function',target='consolider',method='PUT',payload="{\"cursor\": \"%s\"}" % cursor.to_websafe_string())
-			logging.info("Queueing taks in order to continue consolidation of functions")
-			self.response.write('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
+			logging.info("Queueing taks in order to continue consolidating functions")
+			self.SendJsonOKMessage('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
 		else:
-			self.response.write('Consolidation done')
+			logging.info("Consolidation of functions done")
+			self.SendJsonOKMessage('Consolidation done')
+			
 
 class ApplicationHandler(resthandler.RestHandler):
 	def put(self):
-		logging.info("Starting consolidation of applications")
+		
 
 		body = self.readJson()
 
 		if body.get("cursor"):
+			logging.info("Continuing consolidation of applications")
 			(q, cursor, more)= counters.ApplicationCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_APP, 
 				start_cursor=Cursor.from_websafe_string(body.get("cursor")))
 		else:
+			logging.info("Starting consolidation of applications")
 			(q, cursor, more)= counters.ApplicationCounter.get_dirties().fetch_page(page_size=CHUNK_SIZE_APP)
 			
 		logging.info("{} Application Records taken".format(len(q)))
@@ -64,10 +70,11 @@ class ApplicationHandler(resthandler.RestHandler):
 			counters.ApplicationCounter.consolidate(f)
 		if more:
 			task = taskqueue.add(url='/application',target='consolider',method='PUT',payload="{\"cursor\": \"%s\"}" % cursor.to_websafe_string())
-			logging.info("Queueing taks in order to continue consolidation of applications")
-			self.response.write('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
+			logging.info("Queueing taks in order to continue consolidating applications")
+			self.SendJsonOKMessage('Task {} enqueued, ETA {}.'.format(task.name, task.eta))
 		else:
-			self.response.write('Consolidation of Applications done')
+			logging.info("Consolidation of applications done")
+			self.SendJsonOKMessage('Consolidation done')
 		
 
 app = webapp2.WSGIApplication([

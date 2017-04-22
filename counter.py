@@ -24,7 +24,7 @@ class ApplicationCounterHandler(resthandler.RestHandler):
         timestamp = dt_parse(body.get("timestamp"))
         logging.debug("Registering error to application %s on %s",body.get("application"),body.get("timestamp"))
         counters.ApplicationCounter.increment(body.get("application"), timestamp)
-
+        self.SendJsonOKMessage('Counter updated')
 
 class FunctionCounterHandler(resthandler.RestHandler):
     def put(self):
@@ -32,7 +32,7 @@ class FunctionCounterHandler(resthandler.RestHandler):
         timestamp = dt_parse(body.get("timestamp"))
         logging.debug("Registering error to function %s on %s",body.get("function"),body.get("timestamp"))
         counters.FunctionCounter.increment(body.get("function"), timestamp)
-
+        self.SendJsonOKMessage('Counter updated')
 
 
 def dt_parse(t):

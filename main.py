@@ -22,7 +22,7 @@ import shardCounter.report as report
 import resthandler
 
 FUNCTIONS_PAGE_SIZE=10
-APPLICATIONS_PAGE_SIZE=1
+APPLICATIONS_PAGE_SIZE=10
 class ApplicationsHandler(resthandler.RestHandler):
     def get(self):
         nextc = self.request.get("next")
