@@ -39,7 +39,8 @@ class FunctionReportEntry(ndb.Model):
     def getEntriesLastHours(cls, hours):
         now = datetime.today()
         now = now.replace(minute=00, second = 00, microsecond= 00)
-        past = now - timedelta(hours=hours)
+        past = now - timedelta(hours=hours-1)
+        logging.debug("Selecting Functions entries from %s ", past.strftime("%Y-%m-%d %H:%M:%S"))
         return cls.query().filter(cls.date == past).order(-cls.total)
 
 
