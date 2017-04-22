@@ -17,7 +17,6 @@ app.controller("ApplicationController", function($scope, $http, $timeout){
 	    	method: "GET",
 	    	params: params
 	 	}).then(function(response){
-	 		console.log(append)
 	 		if(append){
 				self.applications = self.applications.concat(response.data.result)
 	 		} else {
@@ -31,7 +30,6 @@ app.controller("ApplicationController", function($scope, $http, $timeout){
  	};
 
  	self.loadMore = function (){
- 		console.log(self.next)
  		self.reload(self.next);
  	};
  	self.reload();
@@ -40,8 +38,9 @@ app.controller("ApplicationController", function($scope, $http, $timeout){
 });
 app.controller("FunctionsController", function($scope, $http, $location){
 	var self = this;
+	self.time=12;
  	self.reload = function (next){
- 		var params = {time: 12};
+ 		var params = {time: self.time};
  		if(next){
  			params.next = next;
  		}
@@ -51,7 +50,6 @@ app.controller("FunctionsController", function($scope, $http, $location){
 	    	method: "GET",
 	    	params: params
 	 	}).then(function(response){
-	 		console.log(append)
 	 		if(append){
 				self.functions = self.functions.concat(response.data.result)
 	 		} else {
@@ -65,11 +63,14 @@ app.controller("FunctionsController", function($scope, $http, $location){
  	};
 
  	self.loadMore = function (){
- 		console.log(self.next)
  		self.reload(self.next);
  	};	
 
- 	self.reload();
+ 	$scope.$watch(function(){
+ 		return self.time;
+ 	},function(){
+ 		self.reload()	
+ 	} );
 });
 
 

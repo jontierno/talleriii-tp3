@@ -1,4 +1,16 @@
 <div class="main-box clearfix">
+	<div class="row col-lg-offset-3 col-lg-6">
+
+    <h4>Últimas</h4>
+	    <div class="btn-group">
+	        <label class="btn btn-primary" ng-model="ctrl.time" uib-btn-radio="1">1 hora</label>
+	        <label class="btn btn-primary" ng-model="ctrl.time" uib-btn-radio="2">2 horas</label>
+	        <label class="btn btn-primary" ng-model="ctrl.time" uib-btn-radio="4">4 horas</label>
+	        <label class="btn btn-primary" ng-model="ctrl.time" uib-btn-radio="8">8 horas</label>
+	        <label class="btn btn-primary" ng-model="ctrl.time" uib-btn-radio="12">12 horas</label>
+	    </div>
+    </div>
+
 	<div class="col-lg-offset-3 col-lg-6 table-responsive">
 		<table class="table user-list">
 			<thead>
@@ -19,7 +31,11 @@
 				<tr ng-if="ctrl.more">
 					<td class="text-center"colspan="2"><a href="javascript:void(0)" ng-click="ctrl.loadMore()"><strong>Cargar más</strong></a></td>
 				</tr>
+
 			</tbody>
 		</table>
+		<div ng-if="ctrl.functions.length == 0"> 
+			<p class="text-danger"><strong>No hay resultados para mostrar</strong></p>
+		</div>
 	</div>
 </div>

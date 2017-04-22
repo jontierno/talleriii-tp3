@@ -2,7 +2,7 @@
   'use strict';
 
 var matchApp = angular.module('ErrosLog', [
-  'ngRoute','angular.filter', 'mgcrea.ngStrap'
+  'ngRoute','angular.filter', 'ui.bootstrap'
 ]);
 matchApp.config(['$routeProvider',
   function($routeProvider) {
