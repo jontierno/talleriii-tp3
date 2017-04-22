@@ -1,1 +1,25 @@
-{{ctrl.functions}}
+<div class="main-box clearfix">
+	<div class="col-lg-offset-3 col-lg-6 table-responsive">
+		<table class="table user-list">
+			<thead>
+				<tr>
+					<th><span>Nombre</span></th>
+					<th class="text-center"><span>Cantidad</span></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="e in ctrl.functions">
+					<td class="">
+						{{e.name}}
+					</td>
+					<td class="text-center">
+						<span><strong>{{e.total}}</strong></span>
+					</td>
+				</tr>
+				<tr ng-if="ctrl.more">
+					<td class="text-center"colspan="2"><a href="javascript:void(0)" ng-click="ctrl.loadMore()"><strong>Cargar más</strong></a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
