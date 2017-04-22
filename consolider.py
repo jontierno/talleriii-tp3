@@ -20,7 +20,7 @@ from datetime import datetime,timedelta
 import json
 
 CHUNK_SIZE_FUNC=30
-CHUNK_SIZE_APP=150
+CHUNK_SIZE_APP=1
 DATE_FORMAT='%Y-%m-%dT%H:%M:%S.%f'
 class FunctionHandler(webapp2.RequestHandler):
 	def put(self):
@@ -37,7 +37,7 @@ class FunctionHandler(webapp2.RequestHandler):
 		
 
 		q = counters.FunctionCounter.get_dirties(date).fetch(limit=CHUNK_SIZE_FUNC)	
-		logging.info("{} Function Records taken ", len(q))
+		logging.info("{} Function Records taken".format(len(q)))
 		for f in q:
 			counters.FunctionCounter.consolidate(f)
 		##f is sorter by dirty date.
@@ -65,10 +65,9 @@ class ApplicationHandler(webapp2.RequestHandler):
 		q = counters.ApplicationCounter.get_dirties(date).fetch(limit=CHUNK_SIZE_APP)
 		for element in q:
 			counters.ApplicationCounter.consolidate(element)
-
-		logging.info("{} Application Records taken ", len(q))
+		logging.info("{} Application Records taken".format(len(q)))
 		for f in q:
-			counters.FunctionCounter.consolidate(f)
+			counters.ApplicationCounter.consolidate(f)
 		##f is sorter by dirty date.
 		if len(q) == CHUNK_SIZE_APP:
 			task = taskqueue.add(url='/application',target='consolider',method='PUT',payload="{\"lastDate\": \"%s\"}" % q[-1].lastDirty.strftime(DATE_FORMAT))
