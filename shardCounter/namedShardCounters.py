@@ -51,7 +51,7 @@ class FunctionCounter(shard.GeneralCounterShard):
 				entry.date = actualDate
 				entry.name=functionName
 				accumulated+=entry.count
-				#TODO, i musn't create it in order to dont make delete
+				#TODO, i musn't create it in order to prevent this delete
 				if entry.total >0:
 					entry.put()
 				else:

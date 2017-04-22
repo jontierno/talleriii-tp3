@@ -13,13 +13,43 @@
 # limitations under the License.
 
 import webapp2
-
+import json
+import logging
+import re
+from google.appengine.api import taskqueue
 
 class AnalyzerHandler(webapp2.RequestHandler):
-    def put(self):
-        self.response.write("hello world")
+	def put(self):
+		body_unicode = self.request.body.decode('utf-8')
+		logging.info(body_unicode)
+		body = json.loads(body_unicode)	
+		
+		trace = body.get("trace")
+		application = body.get("application")
+		timestamp = body.get("timestamp")
+
+		queue = taskqueue.Queue(name='count')
+		task = taskqueue.Task(url='/application',
+			target='counter',
+			payload="{\"application\": \"%s\", \"timestamp\": \"%s\"}" % (application,timestamp),
+			method="PUT")
+
+		rpc = queue.add_async(task)
+		rpcs = []
+		for f in re.findall('at (.+)\(', trace):		
+			task = taskqueue.Task(
+				url='/function',
+				target='counter',
+				payload="{\"function\": \"%s\", \"timestamp\": \"%s\"}" % (f,timestamp),
+				method="PUT")
+			logging.debug(f)
+			rpcs.append(queue.add_async(task))
+		rpc.get_result()
+		for rpc in rpcs:
+			rpc.get_result()
 
 
 app = webapp2.WSGIApplication([
-    ('/', AnalyzerHandler),
+	('/', AnalyzerHandler),
 ], debug=True)
+

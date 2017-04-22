@@ -23,12 +23,10 @@ from google.appengine.ext import ndb
 
 class ApplicationCounterHandler(webapp2.RequestHandler):
     def put(self):
-
-    	
     	body_unicode = self.request.body.decode('utf-8')
     	body = json.loads(body_unicode)	
     	timestamp = dt_parse(body.get("timestamp"))
-    	logging.debug("Registering error to %s on %s",body.get("application"),body.get("timestamp"))
+    	logging.debug("Registering error to application %s on %s",body.get("application"),body.get("timestamp"))
     	counters.ApplicationCounter.increment(body.get("application"), timestamp)
 
 
@@ -37,6 +35,7 @@ class FunctionCounterHandler(webapp2.RequestHandler):
     	body_unicode = self.request.body.decode('utf-8')
     	body = json.loads(body_unicode)
     	timestamp = dt_parse(body.get("timestamp"))
+    	logging.debug("Registering error to function %s on %s",body.get("function"),body.get("timestamp"))
     	counters.FunctionCounter.increment(body.get("function"), timestamp)
        
 
