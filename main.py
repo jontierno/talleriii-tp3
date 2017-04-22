@@ -26,7 +26,7 @@ APPLICATIONS_PAGE_SIZE=10
 class ApplicationsHandler(resthandler.RestHandler):
     def get(self):
         nextc = self.request.get("next")
-        date = datetime.strptime(self.request.get("date")[0:10],'%Y-%m-%d')
+        date = datetime.today()
         if nextc:
             (q, cursor, more)= report.ApplicationReportEntry.getEntriesByDate(date).fetch_page(page_size=APPLICATIONS_PAGE_SIZE, 
                 start_cursor=Cursor.from_websafe_string(nextc))

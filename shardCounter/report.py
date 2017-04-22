@@ -16,6 +16,7 @@ class ApplicationReportEntry(ndb.Model):
     @classmethod
     def getEntriesByDate(cls, date):
         qdate = date.replace(hour=00,minute=00, second = 00, microsecond= 00)
+        logging.debug("Selecting Application entries from %s ", qdate.strftime("%Y-%m-%d %H:%M:%S"))
         return cls.query().filter(cls.date == qdate).order(-cls.count)
 
 
