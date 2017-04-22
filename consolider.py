@@ -24,7 +24,8 @@ class FunctionHandler(webapp2.RequestHandler):
     def put(self):
         logging.info("Starting consolidation of functions")
         q = counters.FunctionCounter.get_dirties().fetch(limit=CHUNK_SIZE_FUNC)
-        
+        for f in q:
+			counters.FunctionCounter.consolidate(f)  
 
 class ApplicationHandler(webapp2.RequestHandler):
     def put(self):
