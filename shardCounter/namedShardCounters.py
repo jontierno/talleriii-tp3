@@ -46,12 +46,16 @@ class FunctionCounter(shard.GeneralCounterShard):
 		actualDate=now
 		if past <= date:
 			while actualDate > past:
-				entry = report.FunctionReportEntry.get_one(split[0],"%s/%s/%s" % (actualDate.day, actualDate.month, actualDate.year), actualDate.hour)
+				entry = report.FunctionReportEntry.get_one(functionName,"%s/%s/%s" % (actualDate.day, actualDate.month, actualDate.year), actualDate.hour)
 				entry.setAccumulated(accumulated)
 				entry.date = actualDate
-				entry.name=split[0]
+				entry.name=functionName
 				accumulated+=entry.count
-				entry.put()
+				#TODO, i musn't create it in order to dont make delete
+				if entry.total >0:
+					entry.put()
+				else:
+					entry.key.delete()
 				actualDate =  actualDate -timedelta(hours=1)
 
 		config.dirty=False;
@@ -81,6 +85,6 @@ class ApplicationCounter(shard.GeneralCounterShard):
 		bId = report.ApplicationReportEntry.build_id(applicationName,applicationDate)
 		entry = report.ApplicationReportEntry.get_or_insert(bId)
 		entry.count = count
-		entry.name=split[0]
+		entry.name=applicationName
 		entry.date=date
 		entry.put()

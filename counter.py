@@ -21,6 +21,7 @@ from datetime import datetime,timedelta
 import logging
 from google.appengine.ext import ndb
 
+
 class ApplicationCounterHandler(webapp2.RequestHandler):
     def put(self):
 
