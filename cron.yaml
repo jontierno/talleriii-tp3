@@ -1,10 +1,10 @@
 cron:
-#- description: Application Consolider job
-#  url: /application
-#  target: consolidator
-#  schedule: every 30 mins
+- description: Application Consolider job
+  url: /application
+  target: consolidator
+  schedule: every 300 mins
 
-#- description: Function Consolider job
-#  url: /function
-#  target: consolidator
-#   schedule: every 10 mins
+- description: Function Consolider job
+  url: /function
+  target: consolidator
+  schedule: every 300 mins

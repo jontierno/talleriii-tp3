@@ -53,12 +53,15 @@ def get_count(name, kind):
         Integer; the cumulative count of all sharded counters for the given
             counter name.
     """
-    total = 0
-    all_keys = GeneralCounterShardConfig.all_keys(name, kind)
-    for counter in ndb.get_multi(all_keys):
-        if counter is not None:
-            total += counter.count
-    #memcache.add(name, total, 60)
+    total = memcache.get(name)
+
+    if total is None:
+        total = 0
+        all_keys = GeneralCounterShardConfig.all_keys(name, kind)
+        for counter in ndb.get_multi(all_keys):
+            if counter is not None:
+                total += counter.count
+        memcache.add(name, total, 60)
     return total
 
 
@@ -68,7 +71,7 @@ def increment(kind,name):
     Args:
         name: The name of the counter.
     """
-    memcache.get()
+    ##memcache.get(name)
     config = GeneralCounterShardConfig.get_or_insert(name)
     config.kind=kind.__name__
     _increment(kind,name, config.num_shards)
@@ -80,6 +83,7 @@ def  _mark_dirty (config):
     if  not config.dirty:
         config.dirty = True
         config.put()
+
 
 
 @ndb.transactional
@@ -100,4 +104,4 @@ def _increment(kind,name, num_shards):
     counter.count += 1
     counter.put()
     # Memcache increment does nothing if the name is not a key in memcache
-    #memcache.incr(name)
+    memcache.incr(name)

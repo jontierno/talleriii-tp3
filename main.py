@@ -63,6 +63,7 @@ class FunctionsHandler(resthandler.RestHandler):
 
 class ReportHandler(resthandler.RestHandler):
     def post(self):
+        logging.debug(self.request)
         body = self.readJson()
 
         queue = taskqueue.Queue(name='analysis')

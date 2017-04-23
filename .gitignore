@@ -9,3 +9,4 @@
 *.ear
 *.pyc
 ./**/*.pyc
+.idea/
