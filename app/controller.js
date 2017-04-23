@@ -82,10 +82,10 @@ app.controller("ReportingController", function($scope, $http, $location){
 		if(self.trace.length > 0 && self.timestamp && self.app.length >0){
 			var params = {timestamp: self.timestamp, application : self.app, trace: self.trace};
 			$http.post("/rest/report",params).then(function(){
-				//self.timestamp=moment();
-				//self.trace="";
-				//self.app="";
-				//alert("Reportado correctamente");
+				self.timestamp=moment();
+				self.trace="";
+				self.app="";
+				alert("Reportado correctamente");
 			}).catch(function(){
 				alert("Error al reportar");
 			});

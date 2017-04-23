@@ -1,8 +1,8 @@
 runtime: python27
 api_version: 1
 threadsafe: yes
-service: consolider
+service: consolidator
 
 handlers:
 - url: .*
-  script: consolider.app
+  script: consolidator.app

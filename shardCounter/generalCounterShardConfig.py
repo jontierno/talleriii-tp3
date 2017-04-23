@@ -68,6 +68,7 @@ def increment(kind,name):
     Args:
         name: The name of the counter.
     """
+    memcache.get()
     config = GeneralCounterShardConfig.get_or_insert(name)
     config.kind=kind.__name__
     _increment(kind,name, config.num_shards)
