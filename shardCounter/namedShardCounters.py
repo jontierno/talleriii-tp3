@@ -12,7 +12,8 @@ REPORT_HOURS = 8
 class FunctionCounter(shard.GeneralCounterShard):
     @classmethod
     def increment(cls, name, timestamp):
-        namesh = FUNCTION_NAME_TEMPLATE.format(name, "%s/%s/%s" % (timestamp.day, timestamp.month, timestamp.year),
+        namesh = FUNCTION_NAME_TEMPLATE.format(name, "%s/%s/%s" % (
+        timestamp.day, timestamp.month, timestamp.year),
                                                timestamp.hour)
         shard.increment(FunctionCounter, namesh)
 
@@ -32,10 +33,12 @@ class FunctionCounter(shard.GeneralCounterShard):
         functionName = split[0]
         functionDate = split[1]
         functionHour = split[2]
-        date = datetime.strptime(functionDate + " " + functionHour, "%d/%m/%Y %H")
+        date = datetime.strptime(functionDate + " " + functionHour,
+                                 "%d/%m/%Y %H")
         count = shard.get_count(keyName, FunctionCounter)
         logging.debug(keyName)
-        entry = report.FunctionReportEntry.get_one(functionName, functionDate, functionHour)
+        entry = report.FunctionReportEntry.get_one(functionName, functionDate,
+                                                   functionHour)
         entry.setCount(count)
         entry.name = functionName
         entry.date = date
@@ -47,8 +50,12 @@ class FunctionCounter(shard.GeneralCounterShard):
         actualDate = now
         if past <= date:
             while actualDate > past:
-                entry = report.FunctionReportEntry.get_one(functionName, "%s/%s/%s" % (
-                actualDate.day, actualDate.month, actualDate.year), actualDate.hour)
+                entry = report.FunctionReportEntry.get_one(functionName,
+                                                           "%s/%s/%s" % (
+                                                               actualDate.day,
+                                                               actualDate.month,
+                                                               actualDate.year),
+                                                           actualDate.hour)
                 entry.setAccumulated(accumulated)
                 entry.date = actualDate
                 entry.name = functionName
@@ -68,7 +75,8 @@ class ApplicationCounter(shard.GeneralCounterShard):
     @classmethod
     def increment(cls, name, timestamp):
         removed = name.replace("-", "")
-        namesh = APPLICATION_NAME_TEMPLATE.format(removed, "%s/%s/%s" % (timestamp.day, timestamp.month, timestamp.year))
+        namesh = APPLICATION_NAME_TEMPLATE.format(removed, "%s/%s/%s" % (
+        timestamp.day, timestamp.month, timestamp.year))
         shard.increment(ApplicationCounter, namesh)
 
     @classmethod
@@ -86,7 +94,8 @@ class ApplicationCounter(shard.GeneralCounterShard):
         config.dirty = False;
         config.put()
         count = shard.get_count(name, ApplicationCounter)
-        bId = report.ApplicationReportEntry.build_id(applicationName, applicationDate)
+        bId = report.ApplicationReportEntry.build_id(applicationName,
+                                                     applicationDate)
         entry = report.ApplicationReportEntry.get_or_insert(bId)
         entry.count = count
         entry.name = applicationName
